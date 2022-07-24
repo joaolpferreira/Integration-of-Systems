@@ -1,0 +1,279 @@
+[
+    {
+        "id": "86ee6a770c6ae53f",
+        "type": "tab",
+        "label": "nodeRedFlow",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "d40a36ed1627700c",
+        "type": "mqtt in",
+        "z": "86ee6a770c6ae53f",
+        "name": "",
+        "topic": "signal1",
+        "qos": "2",
+        "datatype": "utf8",
+        "broker": "5bcdf6d1dc2fce01",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 250,
+        "y": 240,
+        "wires": [
+            [
+                "76c7c21e97cdec8b",
+                "71c19c8c688496c2",
+                "8fc97f17da40d4a7"
+            ]
+        ]
+    },
+    {
+        "id": "181179a422a70486",
+        "type": "mqtt in",
+        "z": "86ee6a770c6ae53f",
+        "name": "",
+        "topic": "signal2",
+        "qos": "2",
+        "datatype": "utf8",
+        "broker": "5bcdf6d1dc2fce01",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 250,
+        "y": 360,
+        "wires": [
+            [
+                "a0329edae7e140c1",
+                "8f1f1e4a079e724d",
+                "3139161c207ebc90"
+            ]
+        ]
+    },
+    {
+        "id": "8fc97f17da40d4a7",
+        "type": "function",
+        "z": "86ee6a770c6ae53f",
+        "name": "format to mongo",
+        "func": "objecto = {}\nvar temp=msg.payload\n\n\nif(!(temp==\"None\" || temp==\"\")){\n    var a = new Date(new Date().toString ()+' -0100').toString ();\n    var parts = a.split(\" \");\n\n    var arr = parts[4].split(\":\");\n    dataformat = parts[2] + \"-\" + parts[1] + \"-\" + parts[3]+ \" \" + arr[0] + \":\" + arr[1]+ \":\" + arr[2] ;\n\n    msg.payload = JSON.parse(msg.payload);\n    objecto = {\"temperature\":msg.payload,\"time\":dataformat}\n    msg.payload=objecto;\n\n    return msg;\n}\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 520,
+        "y": 240,
+        "wires": [
+            [
+                "058c439184c8a63c"
+            ]
+        ]
+    },
+    {
+        "id": "3139161c207ebc90",
+        "type": "function",
+        "z": "86ee6a770c6ae53f",
+        "name": "format to mongo",
+        "func": "objecto = {}\nvar temp=msg.payload\n\n\nif(!(temp==\"None\" || temp==\"\")){\n    var a = new Date(new Date().toString ()+' -0100').toString ();\n    var parts = a.split(\" \");\n\n    var arr = parts[4].split(\":\");\n    dataformat = parts[2] + \"-\" + parts[1] + \"-\" + parts[3]+ \" \" + arr[0] + \":\" + arr[1]+ \":\" + arr[2] ;\n\n    msg.payload = JSON.parse(msg.payload);\n    objecto = {\"temperature\":msg.payload,\"time\":dataformat}\n    msg.payload=objecto;\n\n    return msg;\n}\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 500,
+        "y": 360,
+        "wires": [
+            [
+                "7071c1f8da574bf3"
+            ]
+        ]
+    },
+    {
+        "id": "a0329edae7e140c1",
+        "type": "debug",
+        "z": "86ee6a770c6ae53f",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": true,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "payload",
+        "statusType": "auto",
+        "x": 470,
+        "y": 540,
+        "wires": []
+    },
+    {
+        "id": "76c7c21e97cdec8b",
+        "type": "debug",
+        "z": "86ee6a770c6ae53f",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": true,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "payload",
+        "statusType": "auto",
+        "x": 510,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "71c19c8c688496c2",
+        "type": "function",
+        "z": "86ee6a770c6ae53f",
+        "name": "format to influxdb",
+        "func": "var temp=msg.payload\n\nmsg.payload = {\n    value: parseFloat(temp)\n   \n    \n}\n\nif(!(temp==\"None\" || temp==\"\")){\n    return msg;\n}\n\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 530,
+        "y": 160,
+        "wires": [
+            [
+                "9f202db892a59d5a"
+            ]
+        ]
+    },
+    {
+        "id": "8f1f1e4a079e724d",
+        "type": "function",
+        "z": "86ee6a770c6ae53f",
+        "name": "format to influxdb",
+        "func": "var temp=msg.payload\n\nmsg.payload = {\n    value: parseFloat(temp)\n    \n}\n\nif(!(temp==\"None\" || temp==\"\")){\n    return msg;\n}\n\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 510,
+        "y": 460,
+        "wires": [
+            [
+                "5f1ade6a63315f4f"
+            ]
+        ]
+    },
+    {
+        "id": "9f202db892a59d5a",
+        "type": "influxdb out",
+        "z": "86ee6a770c6ae53f",
+        "influxdb": "15c45d3e0545016d",
+        "name": "",
+        "measurement": "signal1",
+        "precision": "",
+        "retentionPolicy": "",
+        "database": "database",
+        "precisionV18FluxV20": "ms",
+        "retentionPolicyV18Flux": "",
+        "org": "organisation",
+        "bucket": "bucket",
+        "x": 880,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "5f1ade6a63315f4f",
+        "type": "influxdb out",
+        "z": "86ee6a770c6ae53f",
+        "influxdb": "15c45d3e0545016d",
+        "name": "",
+        "measurement": "signal2",
+        "precision": "",
+        "retentionPolicy": "",
+        "database": "database",
+        "precisionV18FluxV20": "ms",
+        "retentionPolicyV18Flux": "",
+        "org": "organisation",
+        "bucket": "bucket",
+        "x": 820,
+        "y": 460,
+        "wires": []
+    },
+    {
+        "id": "058c439184c8a63c",
+        "type": "mongodb2 in",
+        "z": "86ee6a770c6ae53f",
+        "service": "_ext_",
+        "configNode": "a71a812a3c8b631f",
+        "name": "",
+        "collection": "Signal1",
+        "operation": "insert",
+        "x": 790,
+        "y": 240,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "7071c1f8da574bf3",
+        "type": "mongodb2 in",
+        "z": "86ee6a770c6ae53f",
+        "service": "_ext_",
+        "configNode": "a71a812a3c8b631f",
+        "name": "",
+        "collection": "Signal2",
+        "operation": "insert",
+        "x": 790,
+        "y": 360,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "5bcdf6d1dc2fce01",
+        "type": "mqtt-broker",
+        "name": "",
+        "broker": "communication",
+        "port": "1883",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": "",
+        "willMsg": {},
+        "sessionExpiry": ""
+    },
+    {
+        "id": "15c45d3e0545016d",
+        "type": "influxdb",
+        "hostname": "influxdb",
+        "port": "8086",
+        "protocol": "http",
+        "database": "dbiscf",
+        "name": "",
+        "usetls": false,
+        "tls": "",
+        "influxdbVersion": "1.x",
+        "url": "influxdb:8086",
+        "rejectUnauthorized": false
+    },
+    {
+        "id": "a71a812a3c8b631f",
+        "type": "mongodb2",
+        "uri": "mongodb://HData1:27017/dbiscf",
+        "name": "QQ",
+        "options": "",
+        "parallelism": "-1"
+    }
+]

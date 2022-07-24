@@ -1,0 +1,1 @@
+docker run -itd -p 2717:27017 --network iscf  -v ~/mongo/data:/data/db --name HData1 mongo:latest
