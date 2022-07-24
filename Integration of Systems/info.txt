@@ -1,0 +1,49 @@
+--Build data generator containers
+docker build -t data-generator1 .
+docker build -t data-generator2 .
+
+--Create network: must create network BEFORE running the containers
+docker network create iscf
+
+--Check network
+docker network inspect iscf
+
+--Run node-red
+docker run -itd -p 1880:1880 --network iscf  -v node_red_data:/data --name integration nodered/node-red
+
+--Run msqt
+docker run -itd --network iscf --name communication eclipse-mosquitto mosquitto -c /mosquitto-no-auth.conf
+
+--Run data generator containers
+docker run --network iscf -e broker=communication -e rate=10 -e topic=signal1 data-generator1
+docker run --network iscf -e broker=communication -e rate=5 -e topic=signal2 data-generator2
+
+--run mongodb
+docker run -itd -p 2717:27017 --network iscf  -v ~/mongo/data:/data/db --name HData1 mongo:latest
+
+--commands mongo
+docker exec -it HData1 bash
+mongo
+use dbiscf
+db.Signal1.find().sort({$natural:-1}).limit(10);
+db.Signal1.find()
+db.Signal2.find()
+
+--run influxdb
+docker run -d --network iscf --name influxdb -v influxdb:/var/lib/influxdb -p 8086:8086 -e INFLUXDB_DB=dbiscf -e INFLUXDB_ADMIN_USER=admin -e INFLUXDB_ADMIN_PASSWORD=password influxdb:1.8
+
+--commands influxdb
+docker exec -it influxdb /bin/bash
+influx
+use dbiscf
+select * from signal1
+select * from signal2
+
+--run grafana
+docker volume create grafana-storage
+docker run -d -p 3000:3000 --network iscf --name=grafana -v grafana-storage:/var/lib/grafana grafana/grafana-enterprise
+
+--palettes node red
+node-red-contrib-influxdb
+node-red-contrib-mongodb2
+
